@@ -26,3 +26,5 @@ Collate:
     'categObsPredModelParam-class.R'
     'getData.R'
     'getVarRoles.R'
+    'setData.R'
+    'setRegressands.R'
