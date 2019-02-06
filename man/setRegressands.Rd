@@ -2,7 +2,7 @@
 % Please edit documentation in R/setRegressands.R
 \name{setRegressands<-}
 \alias{setRegressands<-}
-\title{Set value of component \code{Regressands} of an object \linkS4class{categObsPredModelParam}}
+\title{Set value of component Regressands of an object \linkS4class{categObsPredModelParam}}
 \usage{
 setRegressands(object) <- value
 }
@@ -13,7 +13,8 @@ is to be assigned.}
 \item{value}{character vector to be assigned to the component \code{Regressands}.}
 }
 \value{
-Object \linkS4class{categObsPredModelParam} with the component \code{Regressands} updated.
+Object \linkS4class{categObsPredModelParam} with the component \code{Regressands}
+updated.
 }
 \description{
 \code{setRegressands} assigns a character value to the component \code{Regressands}

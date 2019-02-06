@@ -26,7 +26,7 @@ new(Class = 'categObsPredModelParam')
 
 ObsPredPar <- new(Class = 'categObsPredModelParam',
                   Data = FD,
-                  VarRoles = list(Units = 'NOrden', Domains = 'Tame_05._2.'))
+                  VarRoles = list(Units = 'NOrden', Domains = 'GeoLoc_35._4._2.1.5._1.2.3.'))
 
 }
 

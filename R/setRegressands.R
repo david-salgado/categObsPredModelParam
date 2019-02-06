@@ -1,4 +1,4 @@
-#' @title Set value of component \code{Regressands} of an object \linkS4class{categObsPredModelParam}
+#' @title Set value of component Regressands of an object \linkS4class{categObsPredModelParam}
 #'
 #' @description \code{setRegressands} assigns a character value to the component \code{Regressands}
 #' of the slot \code{VarRoles} of the input object \linkS4class{categObsPredModelParam}.
@@ -8,9 +8,12 @@
 #'
 #' @param value character vector to be assigned to the component \code{Regressands}.
 #'
-#' @return Object \linkS4class{categObsPredModelParam} with the component \code{Regressands} updated.
+#' @return Object \linkS4class{categObsPredModelParam} with the component \code{Regressands}
+#' updated.
 #'
 #' @include categObsPredModelParam-class.R
+#'
+#' @rdname setRegressands
 #'
 #' @export
 setGeneric("setRegressands<-", function(object, value){standardGeneric("setRegressands<-")})

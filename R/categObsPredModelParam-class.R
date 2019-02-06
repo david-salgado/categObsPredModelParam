@@ -20,7 +20,7 @@
 #'
 #' ObsPredPar <- new(Class = 'categObsPredModelParam',
 #'                   Data = FD,
-#'                   VarRoles = list(Units = 'NOrden', Domains = 'Tame_05._2.'))
+#'                   VarRoles = list(Units = 'NOrden', Domains = 'GeoLoc_35._4._2.1.5._1.2.3.'))
 #'
 #' }
 #'
@@ -29,18 +29,21 @@
 #' @export
 setClass(Class = "categObsPredModelParam",
          slots = c(Data = 'StQ',
-                   VarRoles = 'list'),
+                   VarRoles = 'list',
+                   modelFits = 'data.table',
+                   probs = 'data.table'),
          prototype = list(Data = StQ::StQ(),
                           VarRoles = list(Units = character(0),
                                           Domains = character(0),
                                           DesignW = character(0),
                                           Regressands = character(0),
-                                          Regressors = character(0))),
+                                          Regressors = character(0)),
+                          modelFits = data.table::data.table(),
+                          probs = data.table::data.table()),
          validity = function(object){
 
            VarRoles <- slot(object, 'VarRoles')
-           if (!all(names(VarRoles) %in% c('Units', 'Domains', 'DesignW',
-                                           'Regressands', 'Regressors'))){
+           if (!all(names(VarRoles) %in% c('Units', 'Domains', 'DesignW', 'Regressands', 'Regressors'))){
 
              stop('[categObsPredModelParam: validity] All components of VarRoles must be one of these: Units, Domains, DesignW, Regressands, Regressors.')
 
