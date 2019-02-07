@@ -143,16 +143,21 @@ setMethod(
   edData.StQ <- getEdData(fitParam)
   IDQuals_ed <- getIDQual(edData.StQ, 'MicroData')
   targetVars_ed <- c(IDQuals_ed, targetVars)
-  edData.dt <- dcast_StQ(edData.StQ, ExtractNames(targetVars))[, ..targetVars_ed]
+  edData.dt <- dcast_StQ(edData.StQ, ExtractNames(targetVars))[
+      , ..targetVars_ed][
+      !is.na(get(targetVars_ed))]
   setnames(edData.dt, targetVars, paste0(targetVars, '_ed'))
 
   rawData.StQ <- getRawData(fitParam)
   IDQuals_raw <- getIDQual(rawData.StQ, 'MicroData')
   targetVars_raw <- c(IDQuals_raw, targetVars)
-  rawData.dt <- dcast_StQ(rawData.StQ, ExtractNames(targetVars))[, ..targetVars_raw]
+  rawData.dt <- dcast_StQ(rawData.StQ, ExtractNames(targetVars))[
+      , ..targetVars_raw][
+      !is.na(get(targetVars_ed))]
   setnames(rawData.dt, IDQuals_raw, IDQuals_ed)
 
   trainDT <- merge(edData.dt, rawData.dt, by = IDQuals_ed)
+  trainDT <- na.omit(trainDT, cols = c(targetVars, paste0(targetVars, '_ed')))
 
   maxit <- ifelse(is.null(fitParam@selParam$maxit), 50, fitParam@selParam$maxit)
 
@@ -192,9 +197,6 @@ setMethod(
 
 
   }
-
-
-  TRUE
 
   }
 )
