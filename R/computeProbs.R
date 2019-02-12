@@ -122,7 +122,7 @@ setMethod(
     out[, variable := targetVarName]
     return(out[])
   })
-return(probs.dt)
+
   probs.dt <- rbindlist(probs.dt)
   setcolorder(probs.dt, c('variable', targetVarNames, regressors,
                         'pi', 'p11', 'p01', 'p10', 'p00', 'P00', 'P10', 'P11', 'P01'))
