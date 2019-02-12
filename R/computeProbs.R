@@ -81,7 +81,7 @@ setMethod(
 
     data.pi <- modelsDT[, fit.pi[[1]]$data, by = targetVarName][, ..allVars][
       , pi := modelsDT[, list(pi = fit.pi[[1]]$fitted), by = targetVarName][['pi']]]
-
+#return(data.pi)
     data.p1 <- modelsDT[
       , {if (!is.null(fit.1[[1]]) & !is.null(fit.pi[[1]])){
 
@@ -96,9 +96,8 @@ setMethod(
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
         fit.pi[[1]]$data[, c(id.vars, regressors), with = FALSE][, p11 := preds]
 
-      }
-      }, by = targetVarName][
-        , p01 := 1- p11]
+      } 
+      }, by = targetVarName]
 
     data.p0 <- modelsDT[
       , {if (!is.null(fit.0[[1]]) & !is.null(fit.pi[[1]])){
@@ -108,11 +107,12 @@ setMethod(
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
         fit.pi[[1]]$data[, c(id.vars, regressors), with = FALSE][, p10 := preds]
       }
-      }, by = targetVarName][
-        , p00 := 1- p10]
+      }, by = targetVarName]
 
-    data.prob <- data.pi[data.p1, on = allVars][
-      data.p0, on = allVars][
+    data.prob <- merge(data.pi, data.p1, by = allVars, all = TRUE)
+    data.prob[, p11 := ifelse(is.na(p11), 0, p11)][, p01 := 1 - p11]
+    data.prob <- merge(data.prob, data.p0, by = allVars, all = TRUE)
+    data.prob[, p10 := ifelse(is.na(p10), 0, p10)][, p00 := 1 - p10][
       , P00 := ( p00 * (1 - pi) ) / ( p00 * (1 - pi) + (1 - p11) * pi )][
       , P10 := 1 - P00][
       , P11 := ( p11 * pi ) / ( p11 * pi + (1 - p00) * (1 - pi) )][
@@ -122,7 +122,7 @@ setMethod(
     out[, variable := targetVarName]
     return(out[])
   })
-
+return(probs.dt)
   probs.dt <- rbindlist(probs.dt)
   setcolorder(probs.dt, c('variable', targetVarNames, regressors,
                         'pi', 'p11', 'p01', 'p10', 'p00', 'P00', 'P10', 'P11', 'P01'))
