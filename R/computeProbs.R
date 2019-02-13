@@ -73,41 +73,61 @@ setMethod(
   id.vars <- object@VarRoles$Units
   outCols <- c(id.vars, regressors)
 
+  currentData.StQ <- object@Data
+  currentData.dt <- dcast_StQ(currentData.StQ)
+#return(currentData.dt)
   probs.dt <- lapply(targetVarNames, function(targetVarName){
 
     allVars <- c(outCols, targetVarName)
 
     modelsDT <- getModelFits(object)
 
-    data.pi <- modelsDT[, fit.pi[[1]]$data, by = targetVarName][, ..allVars][
-      , pi := modelsDT[, list(pi = fit.pi[[1]]$fitted), by = targetVarName][['pi']]]
-#return(data.pi)
+    #data.pi <- modelsDT[, fit.pi[[1]]$data, by = targetVarName][, ..allVars][
+    #  , pi := modelsDT[, list(pi = fit.pi[[1]]$fitted), by = targetVarName][['pi']]]
+    data.pi <- modelsDT[
+      , {if (!is.null(fit.pi[[1]])){
+
+        coefs <- fit.pi[[1]]$coefficients;
+        mat <- model.matrix(fit.pi[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
+        logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))];
+        preds <- exp(logitPreds) / (1 + exp(logitPreds));
+        copy(currentData.dt)[, c(id.vars, targetVarName, regressors), with = FALSE][, pi := preds]
+      }
+      }, by = targetVarName][
+        currentData.dt, on = c(id.vars, targetVarName, regressors)][
+          , c(id.vars, targetVarName, regressors, 'pi'), with = FALSE]
+
     data.p1 <- modelsDT[
       , {if (!is.null(fit.1[[1]]) & !is.null(fit.pi[[1]])){
 
         coefs <- fit.1[[1]]$coefficients;
-        #print('coefs:');
-        #print(names(coefs));
-        mat <- model.matrix(fit.1[[1]]$formula, fit.pi[[1]]$data);
-        #print('mat:');
-        #print(colnames(mat));
-        mat <- mat[, names(coefs), drop = FALSE];
-        logitPreds <- mat %*% coefs;
+        mat <- model.matrix(fit.1[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
+        logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))]
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
-        fit.pi[[1]]$data[, c(id.vars, regressors), with = FALSE][, p11 := preds]
+        copy(currentData.dt)[, c(id.vars, targetVarName, regressors), with = FALSE][, p11 := preds];
 
-      } 
-      }, by = targetVarName]
+      }
+      }, by = targetVarName][
+        currentData.dt, on = c(id.vars, targetVarName, regressors)][
+          , c(id.vars, targetVarName, regressors, 'p11'), with = FALSE]
 
     data.p0 <- modelsDT[
       , {if (!is.null(fit.0[[1]]) & !is.null(fit.pi[[1]])){
         coefs <- fit.0[[1]]$coefficients;
-        mat <- model.matrix(fit.0[[1]]$formula, fit.pi[[1]]$data)[, names(coefs), drop = FALSE];
-        logitPreds <- mat %*% coefs;
+        mat <- model.matrix(fit.0[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
+        logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))]
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
-        fit.pi[[1]]$data[, c(id.vars, regressors), with = FALSE][, p10 := preds]
+        copy(currentData.dt)[
+          , c(id.vars, targetVarName, regressors), with = FALSE][
+          , p10 := preds];
+
       }
-      }, by = targetVarName]
+      }, by = targetVarName][
+        currentData.dt, on = c(id.vars, targetVarName, regressors)][
+          , c(id.vars, targetVarName, regressors, 'p10'), with = FALSE]
 
     data.prob <- merge(data.pi, data.p1, by = allVars, all = TRUE)
     data.prob[, p11 := ifelse(is.na(p11), 0, p11)][, p01 := 1 - p11]
@@ -116,15 +136,13 @@ setMethod(
       , P00 := ( p00 * (1 - pi) ) / ( p00 * (1 - pi) + (1 - p11) * pi )][
       , P10 := 1 - P00][
       , P11 := ( p11 * pi ) / ( p11 * pi + (1 - p00) * (1 - pi) )][
-      , P01 := 1 - P11]
-    out <- data.prob[!duplicated(data.prob, by = c(regressors, targetVarName))][
-      , (id.vars) := NULL]
-    out[, variable := targetVarName]
-    return(out[])
+      , P01 := 1 - P11][
+      , variable := targetVarName]
+    return(data.prob)
   })
 
   probs.dt <- rbindlist(probs.dt)
-  setcolorder(probs.dt, c('variable', targetVarNames, regressors,
+  setcolorder(probs.dt, c('variable', id.vars, targetVarNames, regressors,
                         'pi', 'p11', 'p01', 'p10', 'p00', 'P00', 'P10', 'P11', 'P01'))
   setProbs(object) <- probs.dt
   return(object)

@@ -165,8 +165,8 @@ setMethod(
 
     cat('Fitting models for marginal probabilities...')
     models_pi <- regfit2(formula = formula, data = trainDT,
-                       id.vars= IDQuals_ed,
-                       maxit = maxit, suffix = '_ed', cond = '')
+                         id.vars= IDQuals_ed,
+                         maxit = maxit, suffix = '_ed', cond = '')
     setnames(models_pi, 'fit' ,'fit.pi')
     cat(' ok.\n')
 
