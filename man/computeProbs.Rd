@@ -42,6 +42,9 @@ A \linkS4class{data.table} with the following columns:
 
 }
 }
+\description{
+Compute error probabilities according to the error model
+}
 \details{
 Regarding \code{formula} see \code{\link{robustlogrm}}.
 
@@ -66,4 +69,3 @@ probs <- computeProbs(models, id.vars, formula)
 }
 
 }
-

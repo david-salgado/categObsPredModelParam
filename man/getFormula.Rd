@@ -29,4 +29,3 @@ getFormula(fitPar)
 }
 
 }
-

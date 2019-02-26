@@ -32,4 +32,3 @@ getEdData(fitPar)
 
 
 }
-

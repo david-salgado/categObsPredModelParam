@@ -22,6 +22,7 @@ performed (\code{TRUE}) or not (\code{FALSE}).}
 
 \item{\code{selParam}}{list of parameters for the model selection when \code{selection == TRUE}}
 }}
+
 \examples{
 # An empty contObsPredModelParam object:
 new(Class = 'fitParam')
@@ -35,4 +36,3 @@ fitPar <- new(Class = 'fitParam', edData = ff_2011_model.StQ, rawData = fd_2011_
 }
 
 }
-

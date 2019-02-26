@@ -18,6 +18,7 @@ compute them.}
 \code{Regressands}, \code{Regressors} being character vectors containing the column names
 according to their respective role in the model.}
 }}
+
 \examples{
 # An empty contObsPredModelParam object:
 new(Class = 'categObsPredModelParam')
@@ -31,4 +32,3 @@ ObsPredPar <- new(Class = 'categObsPredModelParam',
 }
 
 }
-

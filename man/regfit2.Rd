@@ -74,4 +74,3 @@ regfit2(formula= 'y ~ x1', data= trainDT, id.vars= 'ID', cond= '', suffix= '')
 }
 
 }
-

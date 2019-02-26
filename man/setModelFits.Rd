@@ -19,4 +19,3 @@ Object \linkS4class{categObsPredModelParam} with slot \code{modelFits} updated.
 of the input object \linkS4class{categObsPredModelParam} with the fitted models for the
 probabilities in the categorical observation-prediction model.
 }
-

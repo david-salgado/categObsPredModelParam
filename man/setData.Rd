@@ -19,4 +19,3 @@ Object \linkS4class{categObsPredModelParam} with slot \code{Data} updated.
 \code{setData} assigns a \code{StQ} to the slot \code{Data} of the input
 object \linkS4class{categObsPredModelParam}
 }
-

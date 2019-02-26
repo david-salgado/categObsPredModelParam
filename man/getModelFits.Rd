@@ -22,4 +22,3 @@ getModelFits(object)
 \examples{
 
 }
-

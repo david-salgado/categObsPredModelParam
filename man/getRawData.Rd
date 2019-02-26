@@ -31,4 +31,3 @@ getRawData(fitPar)
 }
 
 }
-

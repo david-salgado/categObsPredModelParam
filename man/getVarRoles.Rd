@@ -23,4 +23,3 @@ List with components \code{Units}, \code{Domains}, \code{DesignW}, \code{Regress
 \examples{
 
 }
-

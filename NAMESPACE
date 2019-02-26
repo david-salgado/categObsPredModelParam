@@ -3,6 +3,7 @@
 export("setModelFits<-")
 export("setProbs<-")
 export("setRegressands<-")
+export(Models)
 export(computeProbs)
 export(fitModels)
 export(getEdData)

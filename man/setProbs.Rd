@@ -18,4 +18,3 @@ Object \linkS4class{categObsPredModelParam} with slot \code{probs} updated.
 \code{setProbs} assigns a \linkS4class{data.table} to the slot \code{probs} of the
 input object \linkS4class{categObsPredModelParam}.
 }
-

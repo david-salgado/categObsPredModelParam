@@ -20,4 +20,3 @@ updated.
 \code{setRegressands} assigns a character value to the component \code{Regressands}
 of the slot \code{VarRoles} of the input object \linkS4class{categObsPredModelParam}.
 }
-

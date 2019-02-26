@@ -21,4 +21,3 @@ categorical observation-prediction model or all data necessary to compute them o
 \examples{
 
 }
-
