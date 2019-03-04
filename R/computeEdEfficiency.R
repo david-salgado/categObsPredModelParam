@@ -1,7 +1,9 @@
-#' @title Return a list with the global efficiency indicator and model fits for prior probabilities.
+#' @title Return a \linkS4class{list} with the global efficiency indicator and modelfits
+#' for prior probabilities.
 #'
-#' @description \code{computeEdEfficiency} computes model fits for prior probabilities and 
-#' the global efficiency indicator for a specific value of the regressand and a specific formula.
+#' @description \code{computeEdEfficiency} computes model fits for prior probabilities 
+#' and the global efficiency indicator for a specific value of the regressand and a 
+#' specific formula.
 #' 
 #' @param formula an object of class \code{\link[stats]{formula}} (or one that
 #' can be coerced to that class): a symbolic description of the model to be
@@ -13,7 +15,7 @@
 #' 
 #' @param targetValue value of the regressand (an object of class character).
 #' 
-#' @param id.vars names of the identification variables for each unit in the
+#' @param id.vars names of the identification variables for every unit in the
 #' input data set \code{data}.
 #' 
 #' @param designWeight an object of class character containing the design weight.
@@ -22,8 +24,8 @@
 #' 
 #' @param globalIndicator 
 #' 
-#' @param priorBin number of units to construct the mesh of points to calculate
-#' the efficiency indicator.
+#' @param priorBin number of units in which the data is divided to construct the mesh of points
+#' to calculate the efficiency indicator.
 #' 
 #' @param suffix parameter for the name of the edited version of the variable under analysis.
 #' 
@@ -38,9 +40,9 @@
 #' \dontrun{
 #' }
 #'
-#' @include Models.R regfit2.R computeProbs.R editPriority.R
+#' @include Models.R regfit2.R computeProbs.R editPriority.R computeRunningEstim.R
 #'
-#' @import data.table
+#' @import data.table StQ
 #'
 #' @export
 #' 
