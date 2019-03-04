@@ -129,7 +129,8 @@
 #' }
 #'
 #' @include categObsPredModelParam-class.R fitParam-class.R getSelection.R getEdData.R getRawData.R 
-#' getFormula.R regfit2.R setModelFits.R Models.R
+#' getFormula.R regfit2.R setModelFits.R tryingNewRegressorByVal.R computeEdEfficiency.R 
+#' Models.R regfit2.R computeProbs.R editPriority.R computeRunningEstim.R
 #'
 #' @import data.table StQ
 #'
@@ -208,7 +209,7 @@ setMethod(
                     fit.0 = list()
                   )
   colnames(effReg_final)[colnames(effReg_final)=="var"] <- targetVarName
-  lista<-'000'
+  
   # Se controla el tiempo se ejecuci?n
   inicio <- Sys.time()
     for (valor in lista) {
