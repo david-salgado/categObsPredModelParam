@@ -28,7 +28,7 @@
 #'
 #' }
 #'
-#' @import data.table StQ
+#' @import data.table StQ effInd.R
 #'
 #' @export
 setClass(Class = "fitParam",
