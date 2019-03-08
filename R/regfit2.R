@@ -69,7 +69,7 @@
 #' @include robustlogrm.R
 #'
 #' @export
-regfit2 <- function(formula, data, id.vars, cond, suffix='_ed', ...){
+regfit2 <- function(formula, data, id.vars, targetValue = '', cond, suffix='_ed', ...){
 
 
   varNames <- all.vars(as.formula(formula))
@@ -77,8 +77,13 @@ regfit2 <- function(formula, data, id.vars, cond, suffix='_ed', ...){
   targetVarName_ed <- paste0(as.character(targetVarName), suffix)
   regressors <- setdiff(varNames, targetVarName)
   data <- as.data.table(data)
-  targetValues <- sort(unique(union(data[[targetVarName]], data[[targetVarName_ed]])))
-
+  
+  if (targetValue == ''){
+    targetValues <- sort(unique(union(data[[targetVarName]], data[[targetVarName_ed]])))
+  }else{
+    targetValues <- targetValue
+  }
+  
   if (cond == ''){
 
     formula <- as.formula(gsub(targetVarName, 'bin', formula))
