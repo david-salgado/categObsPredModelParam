@@ -66,11 +66,12 @@ computeEdEfficiency <- function(formula, data, targetValue,id.vars, designWeight
                  id.vars = id.vars,
                  targetValue = targetValue,
                  maxit = maxit, 
-                 suffix = '_ed')
+                 suffix = suffix)
   
   # Separamos en dos conjuntos de datos: dataFD y dataFF y generamos objeto StQ
   # 1. Datos brutos
   dataFD <- copy(data)[,paste0(regressand,suffix) := NULL][,Period := NULL]
+  dataFD <- dataFD[get(regressand)==targetValue]
   dataFD_StQ <- melt_StQ(dataFD,poolDD0)
   dataFD_StQ <- StQListToStQ(BuildStQList(list(AA2011 = dataFD_StQ)))
   dataFD <- dcast_StQ(dataFD_StQ)
@@ -100,15 +101,13 @@ computeEdEfficiency <- function(formula, data, targetValue,id.vars, designWeight
   DataFD_prior <- ObsDataFD@probs
   
   # Filtramos para calcular la eficiencia
-  DataFD_prior <- DataFD_prior[get(regressand)==targetValue]
   N <- dim(DataFD_prior)[1]
   runningPriority <- c(seq(from = 0, to= N, by = priorBin), N)
   
   # Calculamos los momentos de error y establecemos la ordenaci?n de unidades
-  dataFD <- dataFD[get(regressand)==targetValue]
   DataFD_prior <- merge(DataFD_prior, dataFD[,c(id.vars, designWeight),with=FALSE], by = id.vars, all.x = TRUE)
   DataFD_prior <- editPriority(models = models, 
-                               workingDT = DataFD_prior,
+                               data = DataFD_prior,
                                formula = formula, 
                                targetVar = regressand,
                                regressors = regressors, 
