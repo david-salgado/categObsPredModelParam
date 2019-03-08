@@ -1,48 +1,25 @@
-#' @title Return a \linkS4class{list} with the global efficiency indicator and modelfits
-#' for prior probabilities.
+#' @title Return the global efficiency indicator.
 #'
-#' @description \code{computeEdEfficiency} computes model fits for prior probabilities 
-#' and the global efficiency indicator for a specific value of the regressand and a 
-#' specific formula.
+#' @description \code{effInd} computes the global efficiency indicator. It is defined as the 
+#' difference between the area under the polygonal line of the absolute relative pseudo-bias,
+#' and the area under the straight line corresponding to random selection.
 #' 
 #' @param formula an object of class \code{\link[stats]{formula}} (or one that
 #' can be coerced to that class): a symbolic description of the model to be
 #' fitted. The details of model specification are given under ‘Details’.
 #'
-#' @param data data frame, list or environment (or object coercible by
-#' \code{as.data.table} to a \linkS4class{data.table}) containing the variables
-#' in the model (see 'Details').
+#' @param matrix an object of class matrix, containing two columns: 
+#' the absolute relative pseudo-bias, ARB, for every value in the column edPriority, which
+#' represents the number of units analyzed.
 #' 
-#' @param targetValue value of the regressand (an object of class character).
-#' 
-#' @param id.vars names of the identification variables for every unit in the
-#' input data set \code{data}.
-#' 
-#' @param designWeight an object of class character containing the design weight.
-#' 
-#' @param edEffIndicator efficiency indicator to evaluate the ordering given by the model
-#' 
-#' @param globalIndicator 
-#' 
-#' @param priorBin number of units in which the data is divided to construct the mesh of points
-#' to calculate the efficiency indicator.
-#' 
-#' @param suffix parameter for the name of the edited version of the variable under analysis.
-#' 
-#' @param ...	extra arguments to be used to form the default control argument.
-#' 
-#' @return \linkS4class{list} with model fits for prior probabilities, description of 
-#' the model to be fitted, value of the regressand and global efficiency indicator obtained 
-#' for this specific value of the regressand.
+#' @return an object of class numeric with the value of global efficiency indicator.  
 #'
 #' @examples
 #'
 #' \dontrun{
 #' }
 #'
-#' @include Models.R regfit2.R computeProbs.R editPriority.R computeRunningEstim.R
-#'
-#' @import data.table StQ
+#' @import 
 #'
 #' @export
 #' 
