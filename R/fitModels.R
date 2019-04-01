@@ -244,6 +244,8 @@ setMethod(
                                            suffix = '_ed')
           
           saveRDS(effReg[[3]], file.path('c:/temp/models', paste0('effInd_',valor,'_bloque',k,'.rds')))
+          end_time <- Sys.time()
+          t<-seconds.to.hms(as.numeric(end_time-start_time, units = "secs"))
           
           if (effIndG >= effReg[[1]]$global) 
           { effReg <- effReg_aux
@@ -266,7 +268,20 @@ setMethod(
   write(line,file=fileConn,append=TRUE)
   line=paste0(targetVarName,": ",valor,"\nModel Selection: ", effReg[[2]],"\nGlobal: ",effReg[[1]]$global,"\nTiempo: ",t)
   write(line,file=fileConn,append=TRUE)
-  }
+    }
+  
+  #Fin del script
+  fin <- Sys.time()
+  t<-seconds.to.hms(as.numeric(fin-inicio, units = "secs"))
+  
+  send.mail(from = "desa7@ine.es",
+            to = c("Teresa Vázquez <teresa.vazquez.gutierrez@ine.es>"),
+            subject=paste0("Model Selection by ", targetVarName," finished "),
+            body = paste0("Time: ", t),
+            encoding = "utf-8",
+            smtp = list(host.name = "correo.ine.es", port = 25),
+            authenticate = FALSE,
+            send = TRUE)
 
   
   setModelFits(object) <- effReg_final
