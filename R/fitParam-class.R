@@ -28,7 +28,9 @@
 #'
 #' }
 #'
-#' @import data.table StQ
+#' @include effInd.R
+#' 
+#' @import data.table StQ 
 #'
 #' @export
 setClass(Class = "fitParam",
@@ -48,7 +50,7 @@ setClass(Class = "fitParam",
            if (selection == TRUE){
 
              params <- c('edEffInd', 'globalInd', 'priorBin')
-             params.errorIndex <- which(!params %in% names(objects@selParam))
+             params.errorIndex <- which(!params %in% names(object@selParam))
              if (length(params.errorIndex) > 0){
 
                stop(paste0('[fitParam validity] The following selection parameters are missing: ',

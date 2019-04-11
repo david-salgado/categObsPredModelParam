@@ -75,6 +75,10 @@ setMethod(
 
   currentData.StQ <- object@Data
   currentData.dt <- dcast_StQ(currentData.StQ)
+  
+  currentData.dt <- rbindlist(list(currentData.dt,data.table(ctrl='')),fill=T)[,ctrl:=NULL]
+  currentData.dt[is.na(currentData.dt)] <- '-'
+  
 #return(currentData.dt)
   probs.dt <- lapply(targetVarNames, function(targetVarName){
 
@@ -88,7 +92,7 @@ setMethod(
       , {if (!is.null(fit.pi[[1]])){
 
         coefs <- fit.pi[[1]]$coefficients;
-        mat <- model.matrix(fit.pi[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- model.matrix(fit.pi[[1]]$formula, currentData.dt[, bin := TRUE]);
         mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
         logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))];
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
@@ -102,7 +106,7 @@ setMethod(
       , {if (!is.null(fit.1[[1]]) & !is.null(fit.pi[[1]])){
 
         coefs <- fit.1[[1]]$coefficients;
-        mat <- model.matrix(fit.1[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- model.matrix(fit.1[[1]]$formula, currentData.dt[, bin := TRUE]);
         mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
         logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))]
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
@@ -116,7 +120,7 @@ setMethod(
     data.p0 <- modelsDT[
       , {if (!is.null(fit.0[[1]]) & !is.null(fit.pi[[1]])){
         coefs <- fit.0[[1]]$coefficients;
-        mat <- model.matrix(fit.0[[1]]$formula, currentData.dt[, bin := c(TRUE, FALSE)]);
+        mat <- model.matrix(fit.0[[1]]$formula, currentData.dt[, bin := TRUE]);
         mat <- mat[, intersect(names(coefs), colnames(mat)), drop = FALSE];
         logitPreds <- mat %*% coefs[intersect(names(coefs), colnames(mat))]
         preds <- exp(logitPreds) / (1 + exp(logitPreds));
@@ -144,6 +148,10 @@ setMethod(
   probs.dt <- rbindlist(probs.dt)
   setcolorder(probs.dt, c('variable', id.vars, targetVarNames, regressors,
                         'pi', 'p11', 'p01', 'p10', 'p00', 'P00', 'P10', 'P11', 'P01'))
+  
+  nr <- nrow(probs.dt)
+  probs.dt <- probs.dt[2:nr,]
+  
   setProbs(object) <- probs.dt
   return(object)
 

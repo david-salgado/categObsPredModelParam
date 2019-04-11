@@ -2,11 +2,13 @@ Package: categObsPredModelParam
 Type: Package
 Title: Class and methods for the parameters of a categorical observation-
     prediction model
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person("David", "Salgado", email = "david.salgado.fernandez@gmail.com", role = c("cre", "aut")),
     person("Elisa", "Esteban", email = "elisa.esteban.segurado@gmail.com", role = "aut"),
-    person("Soledad", "Saldaña", email = "soledad.saldana.diaz@gmail.com", role = "aut"))
+    person("Soledad", "Salda?a", email = "soledad.saldana.diaz@gmail.com", role = "aut"),
+    person("Jara", "Poch", email = "jarapoch@gmail.com", role = "aut"),
+    person("Teresa", "Vazquez", email = "mteresa.vazquezg@gmail.com", role = "aut"))
 Maintainer: David Salgado <david.salgado.fernandez@gmail.com>
 Description: Definition of an S4 class and methods to handle and compute the
     parameters of a categorical observation-prediction model under the optimization
@@ -27,19 +29,24 @@ Collate:
     'regfit2.R'
     'Models.R'
     'categObsPredModelParam-class.R'
+    'computeRunningEstim.R'
+    'editPriority.R'
     'getData.R'
     'getRegressors.R'
     'getRegressands.R'
     'getModelFits.R'
     'computeProbs.R'
-    'setModelFits.R'
+    'computeEdEfficiency.R'
+    'effInd.R'
     'fitParam-class.R'
-    'getFormula.R'
     'getRawData.R'
     'getEdData.R'
     'getSelection.R'
     'fitModels.R'
+    'getFormula.R'
     'getVarRoles.R'
     'setData.R'
+    'setModelFits.R'
     'setProbs.R'
     'setRegressands.R'
+    'tryingNewRegressorByVal.R'
