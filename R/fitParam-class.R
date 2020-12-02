@@ -8,13 +8,8 @@
 #'
 #' @slot rawData object of class \code{\link[StQ]{StQ}} with the raw values.
 #'
-#' @slot selection logical vector of length 1 to indicate whether a model selection is to be
-#' performed (\code{TRUE}) or not (\code{FALSE}).
-#'
-#' @slot formula character vector with formula(s) for the model(s) to fit.
-#'
 #' @slot selParam list of parameters for the model selection when \code{selection == TRUE}
-#'
+#' @slot valParam list of parameters for validation.
 #'
 #' @examples
 #' # An empty contObsPredModelParam object:
@@ -23,33 +18,25 @@
 #' \dontrun{
 #' source('R:/USIE/Proyecto_DepSel_VarQual/datos/PreparacionStQsAnalisis.R', encoding = 'UTF-8')
 #' fitPar <- new(Class = 'fitParam', edData = ff_2011_model.StQ, rawData = fd_2011_model.StQ,
-#'               selection = FALSE,  formula = 'Ocupacion_35.__11.1.3._ ~ ActivEcono_35.__2.1.1._',
-#'               selParam = list())
+#'              selParam = list())
 #'
 #' }
 #'
 #' @include effInd.R
 #' 
-#' @import data.table StQ 
+#' @import data.table StQ
 #'
 #' @export
 setClass(Class = "fitParam",
          slots = c(edData = 'StQ',
                    rawData = 'StQ',
-                   selection = 'logical',
-                   formula = 'character',
-                   selParam = 'list'),
+                   selParam = 'list',
+                   valParam = 'list'),
          prototype = list(edData = StQ::StQ(),
-                          rawData = StQ::StQ(),
-                          selection = FALSE,
-                          formula = '',
-                          VarRoles = list()),
+                          rawData = StQ::StQ()),
          validity = function(object){
 
-           selection <- slot(object, 'selection')
-           if (selection == TRUE){
-
-             params <- c('edEffInd', 'globalInd', 'priorBin')
+             params <- c('ntreeTry', 'stepFactor', 'improve', 'trace', 'plot', 'doBest', 'ptrain')
              params.errorIndex <- which(!params %in% names(object@selParam))
              if (length(params.errorIndex) > 0){
 
@@ -57,7 +44,14 @@ setClass(Class = "fitParam",
                            paste0(params[params.errorIndex], collapse = ', '), '.\n'))
              }
 
-           }
+             valParams <- c('edEffInd', 'priorBin', 'dataVal')
+             valParams.errorIndex <- which(!valParams %in% names(object@valParam))
+             if (length(valParams.errorIndex) > 0){
+               
+               stop(paste0('[fitParam validity] The following validation parameters are missing: ',
+                           paste0(valParams[valParams.errorIndex], collapse = ', '), '.\n'))
+             }
+           
            return(TRUE)
          }
 )

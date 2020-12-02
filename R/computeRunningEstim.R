@@ -22,6 +22,8 @@
 #' @param id.vars names of the identification variables for each unit in the
 #' input data set \code{data}.
 #' 
+#' @param varPriority variable with the priority of the unit.
+#' 
 #' @param designWeight an object of class character containing the design weight.
 #' 
 #' @param suffix parameter for the name of the edited version of the variable under analysis.
@@ -33,6 +35,26 @@
 #' @examples
 #'
 #' \dontrun{
+#'  fitPar <- new(Class = 'fitParam',
+#'   edData = FFall_AS.StQ, rawData = FGall_AS.StQ, 
+#'   selParam = list(ntreeTry=1000, stepFactor=2, improve=0.05, 
+#'                   trace=TRUE, plot=TRUE, doBest = TRUE, 
+#'                   ptrain = 0.8, DD = DDactu),
+#'                   valParam = list(edEffInd = effInd, priorBin = 5, 
+#'                   dataVal = c('Train','Test')))
+#'                   
+#'  ObsPredPar1 <- new(Class = 'categObsPredModelParam',
+#'                   Data = FGall_AS.StQ,
+#'                   VarRoles = list(Units = IDUnits,
+#'                   Domains = character(0),
+#'                   DesignW = DesignW,
+#'                   Regressands = Regressands,
+#'                   Regressors = Regressors
+#'                   ))
+#'                   
+#' ObsPredPar1 <-  fitModels(ObsPredPar1, fitPar, na.as.category)
+#' ObsPredPar1 <- computeVal(ObsPredPar1, fitPar, na.as.category)
+#'  # computeVal calls computeEdEfficiency calls (computeRunningEstim and effInd)
 #' }
 #'
 #' @include 
@@ -42,22 +64,21 @@
 #' @export
 #' 
 
-computeRunningEstim <- function(edPriority, data, levelsTargetVar, targetVar, id.vars,
+computeRunningEstim <- function(edPriority, data, levelsTargetVar, targetVar, id.vars, varPriority,
                                 designWeight, suffix = '_ed'){
+  
+  value_bin_ed <- bin_ed <- bin <- bin_run <- variable <- NULL
   
   if (class(data[[targetVar]]) %in% c('character', 'factor')){
   
-  
-    #levelsTargetVar <- levels(data[[targetVar]])
-
     workingDT <- copy(data)[, (levelsTargetVar) := lapply(levelsTargetVar, function(val){get(targetVar) == val})]
     DT <- melt(workingDT, 
-               id.vars = c(id.vars, targetVar, paste0(targetVar, suffix), designWeight, 'P01', 'moment', 'priority'), 
+               id.vars = c(id.vars, targetVar, paste0(targetVar, suffix), designWeight, varPriority), 
                measure.vars = levelsTargetVar, variable.name = 'value_bin',
                value.name = 'bin')
     workingDT_ed <- copy(data)[, (levelsTargetVar) := lapply(levelsTargetVar, function(val){get(paste0(targetVar, suffix)) == val})]
     DT_ed <- melt(workingDT_ed, 
-                  id.vars = c(id.vars, targetVar, paste0(targetVar, suffix), designWeight, 'P01', 'moment', 'priority'), 
+                  id.vars = c(id.vars, targetVar, paste0(targetVar, suffix), designWeight, varPriority), 
                   measure.vars = levelsTargetVar, variable.name = 'value_bin_ed',
                   value.name = 'bin_ed')
     
@@ -68,7 +89,7 @@ computeRunningEstim <- function(edPriority, data, levelsTargetVar, targetVar, id
     if (length(edPriority) == 1){
       
       DT[, bin_run := bin][
-        priority <= edPriority, bin_run := bin_ed]
+        varPriority <= edPriority, bin_run := bin_ed]
       output <- DT[, list(estim = sum(as.numeric(get(designWeight)) * bin_run, na.rm = TRUE)), by = c('value_bin')]
       setnames(output, 'value_bin', targetVar)[, edPriority := edPriority]
       return(output)    
@@ -78,13 +99,13 @@ computeRunningEstim <- function(edPriority, data, levelsTargetVar, targetVar, id
       output <- lapply(edPriority, function(edPrior){
         
         DT[, bin_run := bin][
-          priority <= edPrior, bin_run := bin_ed]
+          get(varPriority) <= edPrior, bin_run := bin_ed]
         localOutput <- DT[, list(estim = sum(as.numeric(get(designWeight)) * bin_run, na.rm = TRUE)), by = c('value_bin')]
         setnames(localOutput, 'value_bin', targetVar)[, edPriority := edPrior]
         return(localOutput)
         
       })
-      output <- rbindlist(output)
+     output <- rbindlist(output) 
       return(output)
       
     }

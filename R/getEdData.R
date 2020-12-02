@@ -5,7 +5,7 @@
 #'
 #' @param object Object of class \linkS4class{fitParam}.
 #'
-#' @return Object of class \linkS4class{StQ} corresponding to the slot \code{edData} of the input
+#' @return Object of class \code{"\link[StQ]{StQ}"} corresponding to the slot \code{edData} of the input
 #' object.
 #'
 #' @examples

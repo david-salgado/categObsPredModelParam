@@ -2,9 +2,12 @@
 % Please edit documentation in R/setProbs.R
 \name{setProbs<-}
 \alias{setProbs<-}
+\alias{setProbs<-,categObsPredModelParam,data.table-method}
 \title{Set value of slot \code{probs} of an object \linkS4class{categObsPredModelParam}}
 \usage{
 setProbs(object) <- value
+
+\S4method{setProbs}{categObsPredModelParam,data.table}(object) <- value
 }
 \arguments{
 \item{object}{Object whose slot \code{probs} is to be assigned.}

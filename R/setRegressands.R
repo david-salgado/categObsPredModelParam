@@ -10,6 +10,8 @@
 #'
 #' @return Object \linkS4class{categObsPredModelParam} with the component \code{Regressands}
 #' updated.
+#' 
+#' @importFrom methods validObject
 #'
 #' @include categObsPredModelParam-class.R
 #'
@@ -18,6 +20,8 @@
 #' @export
 setGeneric("setRegressands<-", function(object, value){standardGeneric("setRegressands<-")})
 #'
+#' @rdname setRegressands
+#' 
 #' @export
 setReplaceMethod(
   f = "setRegressands",

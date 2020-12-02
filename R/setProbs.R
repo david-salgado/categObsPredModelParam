@@ -18,6 +18,10 @@
 #' @export
 setGeneric("setProbs<-", function(object, value){standardGeneric("setProbs<-")})
 
+#' @rdname setProbs
+#'
+#' @include categObsPredModelParam-class.R
+#' 
 #' @export
 setReplaceMethod(
   f = "setProbs",

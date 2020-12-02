@@ -17,6 +17,14 @@ compute them.}
 \item{\code{VarRoles}}{List with components \code{Units}, \code{Domains}, \code{DesignW},
 \code{Regressands}, \code{Regressors} being character vectors containing the column names
 according to their respective role in the model.}
+
+\item{\code{modelFits}}{List with components...}
+
+\item{\code{probs}}{Data.table with the probabilities from predict...}
+
+\item{\code{Train}}{Data.table with the set of data for training the model.}
+
+\item{\code{Test}}{Data.table with the set of data for testing the model.}
 }}
 
 \examples{

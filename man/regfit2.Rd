@@ -4,7 +4,7 @@
 \alias{regfit2}
 \title{Fit robust logistic regression models to values of an input variable}
 \usage{
-regfit2(formula, data, id.vars, cond, suffix = "_ed", ...)
+regfit2(formula, data, id.vars, targetValue = "", cond, suffix = "_ed", ...)
 }
 \arguments{
 \item{formula}{an object of class \code{\link[stats]{formula}} (or one that

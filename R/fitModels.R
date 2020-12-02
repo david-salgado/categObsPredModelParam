@@ -1,294 +1,163 @@
-#' @title Return \linkS4class{data.table} with model fits for prior probabilities
+#' @title Return \linkS4class{data.table} with model fits for probabilities.
 #'
-#' @description \code{fitModels} computes model fits for prior pror probabilities. 
-#' In case of the value of the slot selection is FALSE for fitParam object, then \code{fitModels}
-#' computes same model fits for all values of the regressand. 
-#' If selection = TRUE, then \code{fitModels} computes best model fits for each value of the
-#' regressand.
+#' @description \code{fitModels} computes model fits for probabilities. 
 #'
 #' @param object Object of class \linkS4class{categObsPredModelParam}.
 #'
 #' @param fitParam Object of class \linkS4class{fitParam}.
+#' 
+#' @param na.as.category logical with default to \code{FALSE} to deal with NA values in the model. 
+#' If \code{TRUE} the missing values are treated as a new category.
 #'
-#' @return Object of class \linkS4class{categObsPredModelParam} with the slot \code{modelFits}
+#' @return Object of class \linkS4class{categObsPredModelParam} with the slot 
+#' \code{modelFits}
 #' computed with the fitted models.
 #'
 #' @examples
 #'
 #' \dontrun{
-#' path <- 'R:/USIE/Proyecto_DepSel_VarQual'
-#' preDD <- RepoReadWrite::RepoXLSToDD(file.path(p ath, 'E54009/E54009.NombresVariables_V1.xlsx'))
-#' preFD.StQ <- RepoReadWrite::ReadRepoFile(file.path(path, 'E54009/E54009.FD_V1.AA2011.P_1'), 
-#' preDD, perl = TRUE)
-#' preFD.dt <- dcast_StQ(preFD.StQ)
-#' setnames(preFD.dt, IDDDToUnitNames(names(preFD.dt), preDD))
-#' preFD_AS.dt <- preFD.dt[
-#'   , CNO_PR := ifelse(!is.na(B16_2), B16_2, NA)][
-#'   , CNO_PR := ifelse(!is.na(B20a_2), B20a_2, CNO_PR)][
-#'   , CNO_PR := ifelse(!is.na(B20m_2), B20m_2, CNO_PR)][
-#'   , CNO_AS := ifelse(!is.na(F8_2), F8_2, NA)][
-#'   , CNO_AS := ifelse(!is.na(F17a_2), F17a_2, CNO_AS)][
-#'   , CNO_AS := ifelse(!is.na(F17m_2), F17m_2, CNO_AS)][
-#'   , CNAE_PR := ifelse(!is.na(B15_2), B15_2, NA)][
-#'   , CNAE_PR := ifelse(!is.na(B19a_2), B19a_2, CNAE_PR)][
-#'   , CNAE_PR := ifelse(!is.na(B19m_2), B19m_2, CNAE_PR)][
-#'   , CNAE_AS := ifelse(!is.na(F7_2), F7_2, NA)][
-#'   , CNAE_AS := ifelse(!is.na(F16a_2), F16a_2, CNAE_AS)][
-#'   , CNAE_AS := ifelse(!is.na(F16m_2), F16m_2, CNAE_AS)][
-#'   , SitProf := ifelse(!is.na(B21a), B21a, NA)][
-#'   , SitProf := ifelse(!is.na(B21m), B21m, SitProf)][
-#'   , SitProf := ifelse(!is.na(B17), B17, SitProf)][
-#'   , A11_i := ifelse(A11_1_i == '1', 1, NA)][
-#'   , A11_i := ifelse(A11_2_i == '1', 2, A11_i)][
-#'   , A11_i := ifelse(A11_3_i == '1', 3, A11_i)][
-#'   , A11_i := ifelse(A11_4_i == '1', 4, A11_i)][
-#'   , A11_i := ifelse(A11_5_i == '1', 5, A11_i)][
-#'   , A11_i := ifelse(A11_6_i == '1', 6, A11_i)][
-#'   , A11_i := ifelse(A11_7_i == '1', 7, A11_i)][
-#'   , A11_i := ifelse(A11_8_i == '1', 8, A11_i)][
-#'   , CNAE2_AS := Code3toCode2(CNAE_AS)][
-#'   , CNAE1_AS := CNAE2toCNAE1(CNAE2_AS)][
-#'   , CNAE2_PR := Code3toCode2(CNAE_PR)][
-#'   , CNAE1_PR := CNAE2toCNAE1(CNAE2_PR)][
-#'   !is.na(CNAE1_AS) & !is.na(CNO_AS)]
-#' setnames(preFD_AS.dt, UnitToIDDDNames(names(preFD_AS.dt), preDD))
-#' preFD_AS.StQ <- melt_StQ(preFD_AS.dt, preDD)
-#'
-#' preFF.StQ <- RepoReadWrite::ReadRepoFile(file.path(path, 'E54009/E54009.FF_V1.AA2011.D_1'), 
-#' preDD, perl = TRUE)
-#' preFF.dt <- dcast_StQ(preFF.StQ)
-#' setnames(preFF.dt, IDDDToUnitNames(names(preFF.dt), preDD))
-#' preFF_AS.dt <- preFF.dt[
-#'   , CNO_PR := ifelse(!is.na(B16_2), B16_2, NA)][
-#'   , CNO_PR := ifelse(!is.na(B20a_2), B20a_2, CNO_PR)][
-#'   , CNO_PR := ifelse(!is.na(B20m_2), B20m_2, CNO_PR)][
-#'   , CNO_AS := ifelse(!is.na(F8_2), F8_2, NA)][
-#'   , CNO_AS := ifelse(!is.na(F17a_2), F17a_2, CNO_AS)][
-#'   , CNO_AS := ifelse(!is.na(F17m_2), F17m_2, CNO_AS)][
-#'   , CNAE_PR := ifelse(!is.na(B15_2), B15_2, NA)][
-#'   , CNAE_PR := ifelse(!is.na(B19a_2), B19a_2, CNAE_PR)][
-#'   , CNAE_PR := ifelse(!is.na(B19m_2), B19m_2, CNAE_PR)][
-#'   , CNAE_AS := ifelse(!is.na(F7_2), F7_2, NA)][
-#'   , CNAE_AS := ifelse(!is.na(F16a_2), F16a_2, CNAE_AS)][
-#'   , CNAE_AS := ifelse(!is.na(F16m_2), F16m_2, CNAE_AS)][
-#'   , SitProf := ifelse(!is.na(B21a), B21a, NA)][
-#'   , SitProf := ifelse(!is.na(B21m), B21m, SitProf)][
-#'   , SitProf := ifelse(!is.na(B17), B17, SitProf)][
-#'   , A11_i := ifelse(A11_1_i == '1', 1, NA)][
-#'   , A11_i := ifelse(A11_2_i == '1', 2, A11_i)][
-#'   , A11_i := ifelse(A11_3_i == '1', 3, A11_i)][
-#'   , A11_i := ifelse(A11_4_i == '1', 4, A11_i)][
-#'   , A11_i := ifelse(A11_5_i == '1', 5, A11_i)][
-#'   , A11_i := ifelse(A11_6_i == '1', 6, A11_i)][
-#'   , A11_i := ifelse(A11_7_i == '1', 7, A11_i)][
-#'   , A11_i := ifelse(A11_8_i == '1', 8, A11_i)][
-#'   , CNAE2_AS := Code3toCode2(CNAE_AS)][
-#'   , CNAE1_AS := CNAE2toCNAE1(CNAE2_AS)][
-#'   , CNAE2_PR := Code3toCode2(CNAE_PR)][
-#'   , CNAE1_PR := CNAE2toCNAE1(CNAE2_PR)][
-#'   !is.na(CNAE1_AS) & !is.na(CNO_AS)]
-#' setnames(preFF_AS.dt, UnitToIDDDNames(names(preFF_AS.dt), preDD))
-#' preFF_AS.StQ <- melt_StQ(preFF_AS.dt, preDD)
-#'
-#' fitPar <- new(Class = 'fitParam', edData = preFF_AS.StQ, rawData = preFD_AS.StQ,
-#'               selection = FALSE,
-#'               formula = 'Ocupacion_35._2.1.5.1._11.1.3._ ~ ActivEcono_35._2.1.5.1._2.1.1._',
-#'               selParam = list(maxit = 60))
-#' DD <- RepoReadWrite::RepoXLSToDD(file.path(path, 'E54009/E54009.NombresVariables_V2.xlsx'))
-#' FD.StQ <- RepoReadWrite::ReadRepoFile(file.path(path, 'E54009/E54009.FD_V2.AA2017.P_1'), DD,
-#'  perl = TRUE)
-#' FD.dt <- dcast_StQ(FD.StQ)
-#' setnames(FD.dt, IDDDToUnitNames(names(FD.dt), DD))
-#' FD_AS.dt <- FD.dt[
-#'   , CNO_PR := ifelse(!is.na(B16_2), B16_2, NA)][
-#'   , CNO_PR := ifelse(!is.na(B20a_2), B20a_2, CNO_PR)][
-#'   , CNO_PR := ifelse(!is.na(B20b_2), B20b_2, CNO_PR)][
-#'   , CNO_AS := ifelse(!is.na(F9_2), F9_2, NA)][
-#'   , CNO_AS := ifelse(!is.na(F19a_2), F19a_2, CNO_AS)][
-#'   , CNO_AS := ifelse(!is.na(F19b_2), F19b_2, CNO_AS)][
-#'   , CNAE_PR := ifelse(!is.na(B15_2), B15_2, NA)][
-#'   , CNAE_PR := ifelse(!is.na(B19a_2), B19a_2, CNAE_PR)][
-#'   , CNAE_PR := ifelse(!is.na(B19b_2), B19b_2, CNAE_PR)][
-#'   , CNAE_AS := ifelse(!is.na(F8_2), F8_2, NA)][
-#'   , CNAE_AS := ifelse(!is.na(F18a_2), F18a_2, CNAE_AS)][
-#'   , CNAE_AS := ifelse(!is.na(F18b_2), F18b_2, CNAE_AS)][
-#'   , SitProf := ifelse(!is.na(B21a), B21a, NA)][
-#'   , SitProf := ifelse(!is.na(B21b), B21b, SitProf)][
-#'   , SitProf := ifelse(!is.na(B17), B17, SitProf)][
-#'   , CNAE2_AS := Code3toCode2(CNAE_AS)][
-#'   , CNAE1_AS := CNAE2toCNAE1(CNAE2_AS)][
-#'   !is.na(CNO_AS) & !is.na(CNAE1_AS)]
-#' setnames(FD_AS.dt, UnitToIDDDNames(names(FD_AS.dt), DD))
-#' set.seed(1)
-#' sel <- sample(1:dim(FD_AS.dt)[1], 2000)
-#' FD_AS.StQ <- melt_StQ(FD_AS.dt[sel], DD)
-#' ObsPredPar <- new(Class = 'categObsPredModelParam',
-#'                   Data = FD_AS.StQ,
-#'                   VarRoles = list(Units = 'IDHogar', Domains = 'GeoLoc_35._4._2.1.5._1.2.3.'))
-#' fitModels(ObsPredPar, fitPar)
+#'   fitPar <- new(Class = 'fitParam',
+#'   edData = FFall_AS.StQ, rawData = FGall_AS.StQ, 
+#'   selParam = list(ntreeTry=1000, stepFactor=2, improve=0.05, 
+#'                   trace=TRUE, plot=TRUE, doBest = TRUE, 
+#'                   ptrain = 0.8, DD = DDactu),
+#'                   valParam = list(edEffInd = effInd, priorBin = 5, 
+#'                   dataVal = c('Train','Test')))
+#'                   
+#'  ObsPredPar1 <- new(Class = 'categObsPredModelParam',
+#'                   Data = FGall_AS.StQ,
+#'                   VarRoles = list(Units = IDUnits,
+#'                   Domains = character(0),
+#'                   DesignW = DesignW,
+#'                   Regressands = Regressands,
+#'                   Regressors = Regressors
+#'                   ))
+#'                   
+#' ObsPredPar1 <-  fitModels(ObsPredPar1, fitPar, na.as.category)
 #' }
 #'
-#' @include categObsPredModelParam-class.R fitParam-class.R getSelection.R getEdData.R getRawData.R 
-#' getFormula.R regfit2.R setModelFits.R tryingNewRegressorByVal.R computeEdEfficiency.R 
-#' Models.R regfit2.R computeProbs.R editPriority.R computeRunningEstim.R
+#' @include categObsPredModelParam-class.R fitParam-class.R getSelection.R 
+#' getEdData.R getRawData.R setModelFits.R setTrain.R setTest.R RFfit.R
 #'
 #' @import data.table StQ
 #'
 #' @export
-setGeneric("fitModels", function(object, fitParam){standardGeneric("fitModels")})
+setGeneric("fitModels", function(object, fitParam, na.as.category){
+  standardGeneric("fitModels")
+  })
 
 #' @rdname fitModels
 #'
 #' @export
 setMethod(
   f = "fitModels",
-  signature = c("categObsPredModelParam", "fitParam"),
-  function(object, fitParam){
+  signature = c("categObsPredModelParam", "fitParam", "logical"),
+  function(object, fitParam, na.as.category = FALSE){
 
-  selection <- getSelection(fitParam)
-  formula <- getFormula(fitParam)
-  targetVars <- all.vars(formula)
-
+  targetVars <- getRegressands(object)
+  designWeight <- object@VarRoles$DesignW
+  parms <- fitParam@selParam
+  ptrain <- parms$ptrain
+  regressors <- object@VarRoles$Regressors
+  IdUnits <- object@VarRoles$Units
+  
+  # Dataset depurado  
   edData.StQ <- getEdData(fitParam)
   IDQuals_ed <- getIDQual(edData.StQ, 'MicroData')
-  targetVars_ed <- c(IDQuals_ed, targetVars)
-  edData.dt <- dcast_StQ(edData.StQ, ExtractNames(targetVars))[
-      , ..targetVars_ed][
-      !is.na(get(targetVars_ed))]
  
-  
+  edData.dt <- dcast_StQ(edData.StQ, UnitNames = FALSE)
+  edData.dt <- edData.dt[, c(IdUnits, targetVars), with = FALSE]
   setnames(edData.dt, targetVars, paste0(targetVars, '_ed'))
 
+  # Dataset sin depurar
   rawData.StQ <- getRawData(fitParam)
   IDQuals_raw <- getIDQual(rawData.StQ, 'MicroData')
-  targetVars_raw <- c(IDQuals_raw, targetVars)
-  #rawData.dt <- dcast_StQ(rawData.StQ, ExtractNames(targetVars))[
-  #   , ..targetVars_raw][
-  #    !is.na(get(targetVars_ed))]
-  rawData.dt <- dcast_StQ(rawData.StQ)[!is.na(get(targetVars_ed))]
-  
-  setnames(rawData.dt, IDQuals_raw, IDQuals_ed)
-  
-  designWeight <- object@VarRoles$DesignW
 
-  trainDT <- merge(edData.dt, rawData.dt, by = IDQuals_ed)
-  trainDT <- na.omit(trainDT, cols = c(targetVars, paste0(targetVars, '_ed')))
-
-  maxit <- ifelse(is.null(fitParam@selParam$maxit), 50, fitParam@selParam$maxit)
-  maxRegressors<-fitParam@selParam$k
-  parms <- fitParam@selParam
-  
-  if (selection == FALSE) {
+  rawData.dt <- dcast_StQ(rawData.StQ, UnitNames = FALSE)
+  rawData.dt <- rawData.dt[, as.character(designWeight) 
+                           := as.numeric(get(designWeight)) ]
     
-    models<-Models(formula=formula, 
-                          data=trainDT, 
-                          id.vars=IDQuals_ed,
-                          maxit=maxit, 
-                          suffix = '_ed')
-      
-    setModelFits(object) <- models
-
-    return(object)
-
+ 
+  ### Construimos el conjunto de datos de análisis. 
+  Data <- copy(rawData.dt)[!is.na(get(designWeight))]
+  
+  # Se introduce la variable depurada  
+  Data <- merge(Data, edData.dt, by = IDQuals_ed, all.x = TRUE)
+  
+  if(na.as.category){
+    # Valores NA se pasan a *
+    for (j in seq_len(ncol(Data))){
+      set(Data, which(is.na(Data[[j]])), j, '*')
+    }
   }
   
-  if (selection == TRUE) {
+  # Variables numéricas
+  nums <- unlist(lapply(Data, is.numeric))
+  nums <- colnames(Data)[nums]
   
-  varNames <- all.vars(as.formula(formula))
-  targetVarName <- varNames[1]
-  targetVarName_ed <- paste0(as.character(targetVarName), '_ed')
-  data <- as.data.table(trainDT)
+  # Factores y se añaden las variables objetivo (target)
+  targetVars_ed <- paste0(targetVars,'_ed')
+  #targetVars_raw <-  paste0(targetVars,'_raw')
   
-
-  lista <- sort(unique(union(data[[targetVarName]], data[[targetVarName_ed]])))
+  for (j in 1:length(targetVars)){
+  assign(paste0(targetVars[j],'_levels'),
+         sort(union(unique(eval(parse(text=paste0('Data$',targetVars_ed[j] )))), 
+                    unique(eval(parse(text=paste0('Data$',targetVars[j])))) )))
+   
+  Data[
+      , targetVars_ed[j] := factor(get(targetVars_ed[j]), 
+                          levels = get(paste0(targetVars[j],'_levels')))][
+      , targetVars[j] := factor(get(targetVars[j]), 
+                          levels = get(paste0(targetVars[j],'_levels')))][
+      , paste0('target',j) := (get(targetVars[j]) != get(targetVars_ed[j]))*1][
+      , paste0('target',j) := (get(targetVars[j]) != get(targetVars_ed[j]))*1][  
+      ]   
+   
+  }
   
-  effReg_final <- data.table(
-                    var = integer(),
-                    fit.pi = list(),
-                    fit.1 = list(),
-                    fit.0 = list()
-                  )
-  colnames(effReg_final)[colnames(effReg_final)=="var"] <- targetVarName
+  cols <- names(Data[, setdiff(names(Data), 
+                    c(targetVars_ed,targetVars,IDQuals_ed, nums)), with=FALSE])
   
-  # Se controla el tiempo se ejecuci?n
-  inicio <- Sys.time()
-    for (valor in lista) {
-      start_time <- Sys.time()
+  Data[,(cols):=lapply(.SD, as.factor),.SDcols=cols]
+  
+ 
+  # Se ajusta un random forest (train -> 80%; test -> 20%)
+  id_train <- sample(1:nrow(Data), size = floor(ptrain * nrow(Data)))
+  train <- Data[id_train, ]
+  test <- Data[-id_train,]
+  
+  listTest <- list(data = test)
+  listTrain <- list(data = train)
+  
+  setTest(object) <- listTest
+  setTrain(object) <- listTrain
+  
+  model <- list()
+  
+  for (j in 1:length(targetVars)) {
+      print(paste0('Training model ' ,j,' ...'))
+    
+      targetVarName <- paste0('target',j)
       
-      effReg<-0
+      mod <- RFfit(data = train, 
+               targetVarName = targetVarName,
+               regressors = regressors,
+               parms=parms)
       
-      for (k in 1:maxRegressors) {
-        print (paste0(targetVarName,": ",valor, " Bloque ", k))
-        
-          
-        if (k==1) {
-                  effIndG <- -2  #por poner un valor muy bajo
-                  bestModel <- targetVarName 
-                  listRegressors <- object@VarRoles$Regressors
-                
-        } else {
-                  bestModel <- effReg[[2]]
-                  effIndG <- effReg[[1]]$global
-               }
-          
+      print(class(mod))
+      model <- append(model,list(mod))
+      print(class(model))
+      print(class(model[[j]]))
+      #assign(paste0("model",j),model)
+  }
   
-          # ---------------------------------------------------------------------------------
-          effReg_aux <- effReg
-          effReg <- tryingNewRegressorByVal(regformula = bestModel,
-                                           listRegressors = listRegressors,
-                                           data = data,
-                                           targetValue = valor,
-                                           id.vars = IDQuals_ed,
-                                           designWeight = designWeight,
-                                           parms = parms,
-                                           suffix = '_ed')
-          
-          saveRDS(effReg[[3]], file.path('c:/temp/models', paste0('effInd_',valor,'_bloque',k,'.rds')))
-          end_time <- Sys.time()
-          t<-seconds.to.hms(as.numeric(end_time-start_time, units = "secs"))
-          
-          if (effIndG >= effReg[[1]]$global) 
-          { effReg <- effReg_aux
-          break
-          }
-          
-      }
-      
-  effReg_final <- rbind(effReg_final,effReg[[1]]$models)    
+  names(model) <- c(targetVars)
   
-  # ----------------------------------------------------------------------------------
-  saveRDS(effReg, file.path('c:/temp/models', paste0('effReg_',valor,'.rds')))
-  end_time <- Sys.time()
-  t<-seconds.to.hms(as.numeric(end_time-start_time, units = "secs"))
-  
-  #----------------------------------------------------------------------------------
-  #Escribimos el resultado en un fichero txt
-  fileConn<- paste0("c:/temp/ModelSelection",targetVarName, "_output.txt")
-  line=paste0("------------------------------------------------------------------------------------------------------------")
-  write(line,file=fileConn,append=TRUE)
-  line=paste0(targetVarName,": ",valor,"\nModel Selection: ", effReg[[2]],"\nGlobal: ",effReg[[1]]$global,"\nTiempo: ",t)
-  write(line,file=fileConn,append=TRUE)
-    }
-  
-  #Fin del script
-  fin <- Sys.time()
-  t<-seconds.to.hms(as.numeric(fin-inicio, units = "secs"))
-  
-  send.mail(from = "desa7@ine.es",
-            to = c("Teresa Vázquez <teresa.vazquez.gutierrez@ine.es>"),
-            subject=paste0("Model Selection by ", targetVarName," finished "),
-            body = paste0("Time: ", t),
-            encoding = "utf-8",
-            smtp = list(host.name = "correo.ine.es", port = 25),
-            authenticate = FALSE,
-            send = TRUE)
-
-  
-  setModelFits(object) <- effReg_final
+  setModelFits(object) <- model
   
   return(object)
   
-  }
+  
   }
 )
 

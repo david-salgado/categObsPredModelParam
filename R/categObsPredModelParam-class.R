@@ -11,6 +11,10 @@
 #'       \code{Regressands}, \code{Regressors} being character vectors containing the column names
 #'       according to their respective role in the model.
 #'
+#' @slot modelFits List with components...
+#' @slot probs Data.table with the probabilities from predict...
+#' @slot Train Data.table with the set of data for training the model.
+#' @slot Test Data.table with the set of data for testing the model.
 #'
 #' @examples
 #' # An empty contObsPredModelParam object:
@@ -30,16 +34,20 @@
 setClass(Class = "categObsPredModelParam",
          slots = c(Data = 'StQ',
                    VarRoles = 'list',
-                   modelFits = 'data.table',
-                   probs = 'data.table'),
+                   modelFits = 'list',
+                   probs = 'data.table',
+                   Train = 'list',
+                   Test = 'list'),
          prototype = list(Data = StQ::StQ(),
                           VarRoles = list(Units = character(0),
                                           Domains = character(0),
                                           DesignW = character(0),
                                           Regressands = character(0),
                                           Regressors = character(0)),
-                          modelFits = data.table::data.table(),
-                          probs = data.table::data.table()),
+                          modelFits = list(),
+                          probs = data.table::data.table(),
+                          Train = list(),
+                          Test = list()),
          validity = function(object){
 
            VarRoles <- slot(object, 'VarRoles')

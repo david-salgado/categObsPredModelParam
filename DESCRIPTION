@@ -23,14 +23,14 @@ Imports:
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Collate:
     'robustlogrm.R'
     'regfit2.R'
     'Models.R'
+    'RFfit.R'
     'categObsPredModelParam-class.R'
     'computeRunningEstim.R'
-    'editPriority.R'
     'getData.R'
     'getRegressors.R'
     'getRegressands.R'
@@ -42,11 +42,16 @@ Collate:
     'getRawData.R'
     'getEdData.R'
     'getSelection.R'
+    'computeVal.R'
+    'editPriority.R'
     'fitModels.R'
     'getFormula.R'
     'getVarRoles.R'
+    'rocCurve.R'
     'setData.R'
     'setModelFits.R'
     'setProbs.R'
     'setRegressands.R'
+    'setTest.R'
+    'setTrain.R'
     'tryingNewRegressorByVal.R'

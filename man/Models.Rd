@@ -2,28 +2,38 @@
 % Please edit documentation in R/Models.R
 \name{Models}
 \alias{Models}
-\title{Return \linkS4class{data.table} with model fits for prior probabilities}
+\title{Return \linkS4class{data.table} with model fits for prior probabilities.}
 \usage{
 Models(formula, data, id.vars, targetValue = "", maxit, suffix = "_ed")
 }
 \arguments{
-\item{formula}{}
+\item{formula}{an object of class \code{\link[stats]{formula}} (or one that
+can be coerced to that class): a symbolic description of the model to be
+fitted. The details of model specification are given under ‘Details’.}
 
-\item{data}{}
+\item{data}{data frame, list or environment (or object coercible by
+\code{as.data.table} to a \linkS4class{data.table}) containing the variables
+in the model (see 'Details').}
 
-\item{id.vars}{}
+\item{id.vars}{names of the identification variables for each unit in the
+input data set \code{data}.}
 
-\item{targetValue}{}
+\item{targetValue}{value of the regressand (an object of class character).}
 
 \item{maxit}{}
 
-\item{suffix}{}
+\item{suffix}{parameter for the name of the edited version of the variable under analysis.}
 }
 \value{
-\linkS4class{data.table} with ...
+A \linkS4class{data.table} with four colums named with the LHS
+variable of \code{formula}, fit.pi, fit.1 and fit.0. The first column contains 
+every single value of this variable in the input data set \code{data}. 
+The second, third and fourth columns contain a \code{glm} object with the fit
+of the model for each variable value.
 }
 \description{
-\code{Models} computes ...
+\code{Models} computes model fits for prior probabilities for each value or 
+a specific value of the regressand and a specific formula.
 }
 \examples{
 

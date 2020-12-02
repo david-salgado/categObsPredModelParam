@@ -15,12 +15,9 @@ a categorical observation-prediction model in the optimization approach to selec
 
 \item{\code{rawData}}{object of class \code{\link[StQ]{StQ}} with the raw values.}
 
-\item{\code{selection}}{logical vector of length 1 to indicate whether a model selection is to be
-performed (\code{TRUE}) or not (\code{FALSE}).}
-
-\item{\code{formula}}{character vector with formula(s) for the model(s) to fit.}
-
 \item{\code{selParam}}{list of parameters for the model selection when \code{selection == TRUE}}
+
+\item{\code{valParam}}{list of parameters for validation.}
 }}
 
 \examples{
@@ -30,8 +27,7 @@ new(Class = 'fitParam')
 \dontrun{
 source('R:/USIE/Proyecto_DepSel_VarQual/datos/PreparacionStQsAnalisis.R', encoding = 'UTF-8')
 fitPar <- new(Class = 'fitParam', edData = ff_2011_model.StQ, rawData = fd_2011_model.StQ,
-              selection = FALSE,  formula = 'Ocupacion_35.__11.1.3._ ~ ActivEcono_35.__2.1.1._',
-              selParam = list())
+             selParam = list())
 
 }
 

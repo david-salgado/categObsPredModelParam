@@ -2,9 +2,12 @@
 % Please edit documentation in R/setRegressands.R
 \name{setRegressands<-}
 \alias{setRegressands<-}
+\alias{setRegressands<-,categObsPredModelParam,character-method}
 \title{Set value of component Regressands of an object \linkS4class{categObsPredModelParam}}
 \usage{
 setRegressands(object) <- value
+
+\S4method{setRegressands}{categObsPredModelParam,character}(object) <- value
 }
 \arguments{
 \item{object}{Object \linkS4class{categObsPredModelParam} whose component \code{Regressands}
